@@ -27,12 +27,9 @@ use App\Membership_plan;
 use App\Company_coupon;
 use App\Company_payment_method;
 
-
-
 class CompanyController extends Controller
 {
     use CompanyTrait;
-
     public function __construct(){
         $this->middleware('auth');
         //Update membership plans details in session for loggeding company
@@ -43,7 +40,6 @@ class CompanyController extends Controller
             return $next($request);
         });
     }
-
     
     /*
     Method Name:    index
@@ -85,7 +81,6 @@ class CompanyController extends Controller
             $users->email = $postData['email'];
             $users->push();       
             return response()->json(['success' => true, 'message' => 'Company details '.Config::get('constants.SUCCESS.UPDATE_DONE')]);
-
         } catch ( \Exception $e ) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -142,8 +137,6 @@ class CompanyController extends Controller
                         }
                         $company_logo->update(['photo'=>$logoImage, 'imagetype' => $extension]);
                     }
-                    
-                    
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'image '.Config::get('constants.ERROR.IMAGE_TYPE')]);
                 }
@@ -205,8 +198,7 @@ class CompanyController extends Controller
     Params:          {google_plus_link, facebook_link, instagram_link, twitter_link}
     */
     public function sociallinkUpdate(Request $request) {
-        try
-        {
+        try{
             $users = User::findOrFail(Auth::user()->id);
             $postData = $request->all();
             $users->company_detail->google_plus_link = $postData['google_plus_link'];
@@ -265,7 +257,7 @@ class CompanyController extends Controller
         try {
             $coupon = Company_location::where('id',$id)->where('user_id', Auth::user()->id)->delete();
             $this->updateProfile(Auth::user()->id); 
-        	return redirect()->back()->with(['status' => 'success', 'message' => 'Location '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
+            return redirect()->back()->with(['status' => 'success', 'message' => 'Location '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
         } catch(Exception $ex){
             return redirect()->back()->with('status', 'error')->with('message', $e->getMessage());
         }
@@ -312,8 +304,7 @@ class CompanyController extends Controller
                 $service->zipcode = $request->zipcode;
                 $service->state_id = $request->state;
                 $service->country_id = $request->country;
-                $service->save();
-        
+                $service->save();        
                 $this->updateProfile(Auth::user()->id); 
                 return redirect()->route('company.locations')->with('status', 'success')->with('message', ' Company location '.Config::get('constants.SUCCESS.UPDATE_DONE'));
             }
@@ -346,8 +337,7 @@ class CompanyController extends Controller
                     'country_id'   =>  $request->country,
                     'zipcode'   =>  $request->zipcode,
                     'status' => 1
-                ]);
-        
+                ]);        
                 $this->updateProfile(Auth::user()->id); 
                 return redirect()->route('company.locations')->with('status', 'success')->with('message', ' Company Location '.Config::get('constants.SUCCESS.CREATE_DONE'));
             }
