@@ -64,10 +64,11 @@ class CompanyController extends Controller
     Params:          {first_name, last_name, email}
     */
     public function profileUpdate(Request $request) {
-        $validator = Validator::make($request->all(),[
-			'first_name' => 'required|string',  
-			'last_name' => 'required|string',
-			'email' => 'required|email|unique:users,email,'.Auth::user()->id,
+        $validator = Validator::make($request->all(),
+        [
+            'first_name' => 'required|string',  
+            'last_name' => 'required|string',
+            'email' => 'required|email|unique:users,email,'.Auth::user()->id,
         ]);
         if($validator->fails()){
             return response()->json(array(
@@ -79,9 +80,9 @@ class CompanyController extends Controller
         {
             $users = User::findOrFail(Auth::user()->id);
             $postData = $request->all();
-			$users->first_name = $postData['first_name'];
-			$users->last_name = $postData['last_name'];
-			$users->email = $postData['email'];
+            $users->first_name = $postData['first_name'];
+            $users->last_name = $postData['last_name'];
+            $users->email = $postData['email'];
             $users->push();       
             return response()->json(['success' => true, 'message' => 'Company details '.Config::get('constants.SUCCESS.UPDATE_DONE')]);
 
@@ -98,10 +99,10 @@ class CompanyController extends Controller
     */
     public function detailUpdate(Request $request) {
         $validator = Validator::make($request->all(),[
-			'company_name' => 'required|string|unique:company_details,company_name,'.Auth::user()->id.',user_id',  
-			'company_slug' => 'required|string|unique:company_details,slug,'.Auth::user()->id.',user_id',
-			'about' => 'required|string',
-			'website_url' => 'required'
+            'company_name' => 'required|string|unique:company_details,company_name,'.Auth::user()->id.',user_id',  
+            'company_slug' => 'required|string|unique:company_details,slug,'.Auth::user()->id.',user_id',
+            'about' => 'required|string',
+            'website_url' => 'required'
         ]);
         if($validator->fails()){
             return response()->json(array(
@@ -124,22 +125,22 @@ class CompanyController extends Controller
                     $logopath = $companypath.'/logo';
                     $logoImage = time().'.'.$extension;
                     $file->move($logopath, $logoImage); 
-					$company_logo = Company_photo::where('user_id' , Auth::user()->id)->where('photo_type' , 'Logo')->first();
-					if($company_logo == null) {
+                    $company_logo = Company_photo::where('user_id' , Auth::user()->id)->where('photo_type' , 'Logo')->first();
+                    if($company_logo == null) {
                         $logodata =[
-							'user_id' => Auth::user()->id,
-							'photo'=>$logoImage,
+                            'user_id' => Auth::user()->id,
+                            'photo'=>$logoImage,
                             'imagetype' => $extension,
                             'photo_type' => 'Logo',
-							'status' => 1
+                            'status' => 1
                         ];
-						Company_photo::create($logodata); 
-					} else {
+                        Company_photo::create($logodata); 
+                    } else {
                         $image_path = $logopath.'/'.$company_logo->photo;  // Value is not URL but directory file path
                         if(File::exists($image_path)) {
                             File::delete($image_path);
                         }
-						$company_logo->update(['photo'=>$logoImage, 'imagetype' => $extension]);
+                        $company_logo->update(['photo'=>$logoImage, 'imagetype' => $extension]);
                     }
                     
                     
@@ -153,14 +154,13 @@ class CompanyController extends Controller
             }
             $users = User::findOrFail(Auth::user()->id);
             $postData = $request->all();
-			$users->company_detail->company_name = $postData['company_name'];
-			$users->company_detail->website_url = $postData['website_url'];
-			$users->company_detail->about = $postData['about'];
-			$users->company_detail->slug = $slug;
-            $users->push();     
+            $users->company_detail->company_name = $postData['company_name'];
+            $users->company_detail->website_url = $postData['website_url'];
+            $users->company_detail->about = $postData['about'];
+            $users->company_detail->slug = $slug;
+            $users->push();
             $this->updateProfile(Auth::user()->id); 
             return response()->json(['success' => true, 'image' => $image, 'message' => 'Company details '.Config::get('constants.SUCCESS.UPDATE_DONE')]);
-
         } catch ( \Exception $e ) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -174,8 +174,8 @@ class CompanyController extends Controller
     */
     public function contactUpdate(Request $request) {
         $validator = Validator::make($request->all(),[
-			'contact_person_mobile' => 'required|digits:10|unique:company_details,contact_person_mobile,'.Auth::user()->id.',user_id',
-			'contact_person_email' => 'required|email|unique:company_details,contact_person_email,'.Auth::user()->id.',user_id',
+            'contact_person_mobile' => 'required|digits:10|unique:company_details,contact_person_mobile,'.Auth::user()->id.',user_id',
+            'contact_person_email' => 'required|email|unique:company_details,contact_person_email,'.Auth::user()->id.',user_id',
         ]);
         if($validator->fails()){
             return response()->json(array(
@@ -187,13 +187,12 @@ class CompanyController extends Controller
         {
             $users = User::findOrFail(Auth::user()->id);
             $postData = $request->all();
-			$users->company_detail->contact_person_mobile = $postData['contact_person_mobile'];
-			$users->company_detail->contact_person_email = $postData['contact_person_email'];
-			$users->company_detail->toll_free_number = $postData['toll_free_number'];
-			$users->company_detail->customer_care_number = $postData['customer_care_number'];
+            $users->company_detail->contact_person_mobile = $postData['contact_person_mobile'];
+            $users->company_detail->contact_person_email = $postData['contact_person_email'];
+            $users->company_detail->toll_free_number = $postData['toll_free_number'];
+            $users->company_detail->customer_care_number = $postData['customer_care_number'];
             $users->push();       
             return response()->json(['success' => true, 'message' => 'Company contact details '.Config::get('constants.SUCCESS.UPDATE_DONE')]);
-
         } catch ( \Exception $e ) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -210,13 +209,12 @@ class CompanyController extends Controller
         {
             $users = User::findOrFail(Auth::user()->id);
             $postData = $request->all();
-			$users->company_detail->google_plus_link = $postData['google_plus_link'];
-			$users->company_detail->facebook_link = $postData['facebook_link'];
-			$users->company_detail->twitter_link = $postData['twitter_link'];
-			$users->company_detail->instagram_link = $postData['instagram_link'];
+            $users->company_detail->google_plus_link = $postData['google_plus_link'];
+            $users->company_detail->facebook_link = $postData['facebook_link'];
+            $users->company_detail->twitter_link = $postData['twitter_link'];
+            $users->company_detail->instagram_link = $postData['instagram_link'];
             $users->push();       
             return response()->json(['success' => true, 'message' => 'Company social links '.Config::get('constants.SUCCESS.UPDATE_DONE')]);
-
         } catch ( \Exception $e ) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -232,7 +230,8 @@ class CompanyController extends Controller
         if ($request->isMethod('get')) {
             $companies = User::with(['company_detail', 'company_photo' => function ($query) {
                 $query->where('photo_type', 'Logo');
-            }])->where('id', Auth::user()->id)->first();
+            }])
+            ->where('id', Auth::user()->id)->first();
             return view('company.password', compact('companies'));
         }
         else{
@@ -247,12 +246,10 @@ class CompanyController extends Controller
             if(strcmp($request->get('old_password'), $request->get('password')) == 0){
                 return redirect()->back()->with('status', 'error')->with('message', Config::get('constants.ERROR.PASSWORD_SAME'));
             }
-            
             //Change Password
             $user = Auth::user();
             $user->password = Hash::make($request->get('password'));
             $user->save();
-
             return redirect()->back()->with('status', 'success')->with('message', ' Password '.Config::get('constants.SUCCESS.UPDATE_DONE'));
         }
     }
@@ -267,7 +264,6 @@ class CompanyController extends Controller
         $id = decrypt_userdata($id);
         try {
             $coupon = Company_location::where('id',$id)->where('user_id', Auth::user()->id)->delete();
-            
             $this->updateProfile(Auth::user()->id); 
         	return redirect()->back()->with(['status' => 'success', 'message' => 'Location '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
         } catch(Exception $ex){
@@ -380,34 +376,31 @@ class CompanyController extends Controller
             try{
 
                 if($request->hasFile('awardbanner')){
-                        $file = $request->file('awardbanner');
-                        $allowedfileExtension=['jpg', 'jpeg','png'];
-                        $extension = $file->getClientOriginalExtension();
-                        $check=in_array($extension,$allowedfileExtension);
-                        if($check) {
-                    
-                            $encrypt_companyId = base64_encode(Auth::user()->id);
-                            $companypath = public_path().'/assets/media/' . $encrypt_companyId;
-                            $logopath = $companypath.'/'.$request->photo_type;
-                            $logoImage = time().'.'.$extension;
-                            $file->move($logopath, $logoImage); 
-                            $logodata =[
-                                'user_id' => Auth::user()->id,
-                                'photo'=>$logoImage,
-                                'imagetype' => $extension,
-                                'photo_type' => $request->photo_type,
-                                'status' => 1
-                            ];
-
-                            $awardCount = Company_photo::where('photo_type', 'Award')->where('user_id', Auth::user()->id)->count();
-                            if($request->photo_type == 'Award' && $awardCount >= Session::get('membership_plan_other_data')['Awards'])
-                            return redirect()->back()->with('status', 'error')->with('message', 'Maximum '.Session::get('membership_plan_other_data')['Awards'].' award(s) allowed' );
-                            Company_photo::create($logodata);
-                        } else {
-                            return redirect()->back()->with(['status' => 'error', 'message' => $request->photo_type.Config::get('constants.ERROR.IMAGE_TYPE')]);
-                        }
+                    $file = $request->file('awardbanner');
+                    $allowedfileExtension=['jpg', 'jpeg','png'];
+                    $extension = $file->getClientOriginalExtension();
+                    $check=in_array($extension,$allowedfileExtension);
+                    if($check) {
+                        $encrypt_companyId = base64_encode(Auth::user()->id);
+                        $companypath = public_path().'/assets/media/' . $encrypt_companyId;
+                        $logopath = $companypath.'/'.$request->photo_type;
+                        $logoImage = time().'.'.$extension;
+                        $file->move($logopath, $logoImage); 
+                        $logodata =[
+                            'user_id' => Auth::user()->id,
+                            'photo'=>$logoImage,
+                            'imagetype' => $extension,
+                            'photo_type' => $request->photo_type,
+                            'status' => 1
+                        ];
+                        $awardCount = Company_photo::where('photo_type', 'Award')->where('user_id', Auth::user()->id)->count();
+                        if($request->photo_type == 'Award' && $awardCount >= Session::get('membership_plan_other_data')['Awards'])
+                        return redirect()->back()->with('status', 'error')->with('message', 'Maximum '.Session::get('membership_plan_other_data')['Awards'].' award(s) allowed' );
+                        Company_photo::create($logodata);
+                    } else {
+                        return redirect()->back()->with(['status' => 'error', 'message' => $request->photo_type.Config::get('constants.ERROR.IMAGE_TYPE')]);
+                    }
                 }
-                
                 return redirect()->back()->with('status', 'success')->with('message', $request->photo_type.' '.Config::get('constants.SUCCESS.CREATE_DONE'));
             } catch ( \Exception $e ) {
                 return redirect()->back()->with('status', 'error')->with('message', $e->getMessage());
@@ -433,7 +426,7 @@ class CompanyController extends Controller
                 File::delete($image_path);
                 $image->delete();
             }
-        	return redirect()->back()->with(['status' => 'success', 'message' => $image->photo_type.' '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
+            return redirect()->back()->with(['status' => 'success', 'message' => $image->photo_type.' '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
         } catch(Exception $ex){
             return redirect()->back()->with('status', 'error')->with('message', $e->getMessage());
         }
@@ -473,7 +466,6 @@ class CompanyController extends Controller
                     'expiry_date' => $request->expiry_date,
                     'status' => 1
                 ]);
-                
                 return redirect()->back()->with('status', 'success')->with('message', 'Coupon '.Config::get('constants.SUCCESS.CREATE_DONE'));
             } catch ( \Exception $e ) {
                 return redirect()->back()->with('status', 'error')->with('message', $e->getMessage());
@@ -497,7 +489,7 @@ class CompanyController extends Controller
             }])->where('id', Auth::user()->id)->first();
             $coupons = Company_coupon::where('user_id', Auth::user()->id)->where('id', $id)->first();
             if(!$coupons)
-                return redirect()->route('company.coupons')->with('status', 'error')->with('message', Config::get('constants.ERROR.OOPS_ERROR'));
+            return redirect()->route('company.coupons')->with('status', 'error')->with('message', Config::get('constants.ERROR.OOPS_ERROR'));
             return view('company.coupon-update', compact('coupons', 'companies'));
         }
         else{
@@ -511,7 +503,7 @@ class CompanyController extends Controller
             try{
                 $coupons = Company_coupon::where('user_id', Auth::user()->id)->where('id', $id)->first();
                 if(!$coupons)
-                    return redirect()->route('company.coupons')->with('status', 'error')->with('message', Config::get('constants.ERROR.OOPS_ERROR'));
+                return redirect()->route('company.coupons')->with('status', 'error')->with('message', Config::get('constants.ERROR.OOPS_ERROR'));
                 $coupons->name = $request->coupon_name;
                 $coupons->code = $request->coupon_code;
                 $coupons->detail = $request->detail;
@@ -519,7 +511,6 @@ class CompanyController extends Controller
                 $coupons->expiry_date = $request->expiry_date;
                 $coupons->status = 1;
                 $coupons->save();
-                
                 return redirect()->route('company.coupons')->with('status', 'success')->with('message', 'Coupon '.Config::get('constants.SUCCESS.UPDATE_DONE'));
             } catch ( \Exception $e ) {
                 return redirect()->back()->with('status', 'error')->with('message', $e->getMessage());
@@ -538,18 +529,13 @@ class CompanyController extends Controller
         if((Session::has('membership_plan_other_data')) && (Session::get('membership_plan_other_data')['Coupons'] == 0))
             abort(403, Config::get('constants.ERROR.FORBIDDEN_ERROR'));
         $getData = $request->all();
-
         //Check coupon id DB
-        $coupons = Company_coupon::where('user_id', Auth::user()->id)->where('id', decrypt_userdata($getData['id']))->first();
-
-        
+        $coupons = Company_coupon::where('user_id', Auth::user()->id)->where('id', decrypt_userdata($getData['id']))->first();        
         if(!$coupons) //If coupon not exist redirect back with error message
-            return redirect()->route('company.coupons')->with('status', 'error')->with('message', Config::get('constants.ERROR.OOPS_ERROR'));
-
+        return redirect()->route('company.coupons')->with('status', 'error')->with('message', Config::get('constants.ERROR.OOPS_ERROR'));
         //Update status in DB
         $coupons->status = $getData['status'];
         $coupons->save();
-
         //Redirect back with success message
         return redirect()->back()->with('status', 'success')->with('message', 'Coupon '.Config::get('constants.SUCCESS.STATUS_UPDATE'));
     }
@@ -561,14 +547,12 @@ class CompanyController extends Controller
     Params:          {encrypted Id}
     */
     public function couponDelete($id){
-        $id = decrypt_userdata($id);
-        
+        $id = decrypt_userdata($id);        
         //Check if company have access for coupon module
         if((Session::has('membership_plan_other_data')) && (Session::get('membership_plan_other_data')['Coupons'] == 0))
             abort(403, Config::get('constants.ERROR.FORBIDDEN_ERROR'));
         try {
-            $coupon = Company_coupon::where('id',$id)->where('user_id', Auth::user()->id)->delete();
-            
+            $coupon = Company_coupon::where('id',$id)->where('user_id', Auth::user()->id)->delete();            
             //Redirect back with success message
         	return redirect()->back()->with(['status' => 'success', 'message' => 'Coupon '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
         } catch(Exception $ex){
@@ -585,10 +569,8 @@ class CompanyController extends Controller
     public function serviceDelete($id){
         $id = decrypt_userdata($id);
         try {
-            $coupon = Company_service::where('id',$id)->where('user_id', Auth::user()->id)->delete();
-            
+            $coupon = Company_service::where('id',$id)->where('user_id', Auth::user()->id)->delete();            
             $this->updateProfile(Auth::user()->id); 
-
             //Redirect back with success message
         	return redirect()->back()->with(['status' => 'success', 'message' => 'Service '.Config::get('constants.SUCCESS.DELETE_DONE')]); ;
         } catch(Exception $ex){
@@ -642,11 +624,9 @@ class CompanyController extends Controller
                 $service->platform = $request->platform;
                 $service->details = $request->details;
                 $service->url = $request->url;
-                $service->save();
-                
+                $service->save();                
                 //Update profile progress by ID
-                $this->updateProfile(Auth::user()->id); 
-                
+                $this->updateProfile(Auth::user()->id);                 
                 //Redirect back with success message
                 return redirect()->route('company.services')->with('status', 'success')->with('message', ' Company Service '.Config::get('constants.SUCCESS.UPDATE_DONE'));
             }
@@ -669,19 +649,15 @@ class CompanyController extends Controller
                     'details' => 'required|string',
                     'url' => 'required|string',
                 ]);
-
                 //Check for duplicate entry 
                 $service = Company_service::where('service_id', $request->service)->where('user_id', Auth::user()->id)->first();
                 if(!is_null($service))
                 return redirect()->back()->with('status', 'error')->with('message', 'Duplicate entry for service not allowed');
-
                 //Sercice count for company
                 $serviceCount = Company_service::where('user_id', Auth::user()->id)->count();
-
                 //Check membership plan how many service can compnay add and take action accordingly
                 if($serviceCount >= Session::get('membership_plan_other_data')['Services'])
-                    return redirect()->back()->with('status', 'error')->with('message', 'Maximum '.Session::get('membership_plan_other_data')['Services'].' services allowed' );
-
+                return redirect()->back()->with('status', 'error')->with('message', 'Maximum '.Session::get('membership_plan_other_data')['Services'].' services allowed' );
                 //Create new service for company
                 Company_service::create([
                     'user_id' => Auth::user()->id,
@@ -692,8 +668,7 @@ class CompanyController extends Controller
                     'details' => $request->details,
                     'url' => $request->url,
                     'status' => 1
-                ]);
-        
+                ]);        
                 //Update profile progress by userId
                 $this->updateProfile(Auth::user()->id); 
                 return redirect()->route('company.services')->with('status', 'success')->with('message', ' Company Service '.Config::get('constants.SUCCESS.CREATE_DONE'));
