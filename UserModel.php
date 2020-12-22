@@ -19,7 +19,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [  
+	protected $fillable = [
 		'first_name', 
 		'last_name',
 		'email',
@@ -31,7 +31,7 @@ class User extends Authenticatable
 		'status',
 		'show_in_front',
 		'verified',
-    ];
+	];
 	
 	public $sortable = [ 
 		'id',
